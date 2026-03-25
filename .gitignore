@@ -1,2 +1,3 @@
-build/
+mermaid-tui
 *.o
+test/test_*
