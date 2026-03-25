@@ -1,12 +1,12 @@
 CC     = gcc
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600
 
 .PHONY: all clean help check test install
 
 all: mermaid-tui
 
-mermaid-tui: src/main.c
-	$(CC) $(CFLAGS) -o $@ $^
+mermaid-tui: src/main.c src/canvas.c
+	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 test:
 	@echo "==> unit tests"
