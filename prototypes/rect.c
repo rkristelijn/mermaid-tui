@@ -1,3 +1,6 @@
+/* rect.c — draw a full-screen rectangle using box-drawing characters.
+ * Reads terminal size via /dev/tty (works even when stdout is a pipe).
+ * Falls back to 80x23 if terminal size is unavailable. */
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>

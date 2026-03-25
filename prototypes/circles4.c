@@ -1,3 +1,7 @@
+/* circles4.c — draw 4 circles using different ASCII char sets.
+ * Each quadrant uses a different set of characters to represent the circle outline.
+ * Characters are chosen based on the angle of the point (8 sectors of 45°).
+ * Uses a char grid buffer to avoid ANSI cursor positioning. */
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -38,6 +42,7 @@ static void draw_circle(float cx, float cy, float rx, float ry,
             float dy = (r - cy) / ry;
             float dist = sqrtf(dx*dx + dy*dy);
             if (fabsf(dist - 1.0f) < thickness / fminf(rx, ry * 2)) {
+                /* map angle to one of 8 sectors (N/NE/E/SE/S/SW/W/NW) */
                 float angle = atan2f(dy * ry, dx * rx);
                 int sector = (int)((angle + M_PI) / (2 * M_PI) * 8 + 0.5f) % 8;
                 canvas_set(r, c, chars[sector][0]);
@@ -66,8 +71,7 @@ int main(void) {
     float cy[4] = { hh*0.5f, hh*0.5f, hh*1.5f, hh*1.5f };
 
     /* N  NE   E    SE    S    SW   W    NW  */
-    const char *sets[4][8] = {
-        { "|", "/",  "-",  "\\", "|", "/",  "-",  "\\" },
+    const char *sets[4][8] = {        { "|", "/",  "-",  "\\", "|", "/",  "-",  "\\" },
         { "|", "/",  "=",  "\\", "|", "/",  "=",  "\\" },
         { ":", "\"", "~",  "`",  ":", "'",  "~",  "\"" },
         { "o", "o",  "o",  "o",  "o", "o",  "o",  "o"  },

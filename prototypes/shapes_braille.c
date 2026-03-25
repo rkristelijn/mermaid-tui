@@ -1,3 +1,7 @@
+/* shapes_braille.c — draw oval, star, trapezium and triangle using braille.
+ * All shapes are drawn in dot space (2x cols, 4x rows) and packed into
+ * braille codepoints for high-resolution terminal output.
+ * Demonstrates canvas_line() and canvas_ellipse() primitives. */
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -73,10 +77,10 @@ int main(void) {
     float qrx = hw * 0.4f;
     float qry = hh * 0.4f;
 
-    /* Q1: oval (wide) */
+    /* Q1: oval (wide ellipse, rx >> ry) */
     ellipse(ox[0], oy[0], qrx, qry * 0.5f);
 
-    /* Q2: star (5-point) */
+    /* Q2: 5-point star using inner (r2) and outer (r1) radius */
     {
         float cx = ox[1], cy = oy[1];
         float r1 = qrx * 0.9f, r2 = qrx * 0.4f;
@@ -93,7 +97,7 @@ int main(void) {
         }
     }
 
-    /* Q3: trapezium */
+    /* Q3: trapezium — wider base (bw) than top (tw) */
     {
         float cx = ox[2], cy = oy[2];
         float tw = qrx * 0.6f, bw = qrx * 0.9f, h = qry * 0.7f;
@@ -103,7 +107,7 @@ int main(void) {
         line(cx+bw, cy+h, cx+tw, cy-h); /* right */
     }
 
-    /* Q4: triangle */
+    /* Q4: equilateral-ish triangle with apex at top */
     {
         float cx = ox[3], cy = oy[3];
         float r = qrx * 0.9f;

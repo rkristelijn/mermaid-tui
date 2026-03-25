@@ -1,3 +1,6 @@
+/* olympic.c — render the 5 Olympic rings using the braille canvas.
+ * Top row: 3 rings. Bottom row: 2 rings offset by half a gap.
+ * Rings overlap slightly (gap < 2*r) to match the real logo. */
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
