@@ -3,6 +3,9 @@
  * Drawing happens in dot space (canvas_dw x canvas_dh), where each terminal
  * cell maps to a 2x4 braille dot block. Primitives set individual dots;
  * canvas_print_braille() packs 8 dots per cell into a Unicode braille codepoint.
+ *
+ * See: ../docs/renderer-decision.md — why braille, encoding details, ASCII fallback
+ * See: ../docs/architecture.md      — virtual canvas in the C4 component design
  */
 #include <stdio.h>
 #include <string.h>

@@ -1,7 +1,10 @@
 /* circles4.c — draw 4 circles using different ASCII char sets.
  * Each quadrant uses a different set of characters to represent the circle outline.
  * Characters are chosen based on the angle of the point (8 sectors of 45°).
- * Uses a char grid buffer to avoid ANSI cursor positioning. */
+ * Uses a char grid buffer to avoid ANSI cursor positioning.
+ *
+ * See: ../docs/renderer-decision.md — comparison of ASCII vs braille rendering
+ */
 #include <stdio.h>
 #include <math.h>
 #include <string.h>

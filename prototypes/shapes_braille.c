@@ -1,7 +1,11 @@
 /* shapes_braille.c — draw oval, star, trapezium and triangle using braille.
  * All shapes are drawn in dot space (2x cols, 4x rows) and packed into
  * braille codepoints for high-resolution terminal output.
- * Demonstrates canvas_line() and canvas_ellipse() primitives. */
+ * Demonstrates canvas_line() and canvas_ellipse() primitives.
+ *
+ * See: ../docs/renderer-decision.md — braille dot encoding and virtual canvas
+ * See: ../src/canvas.h              — canvas API
+ */
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
