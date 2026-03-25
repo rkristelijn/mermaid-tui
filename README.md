@@ -1,20 +1,33 @@
 # mermaid-tui
 
-A terminal viewer for Markdown and Mermaid diagrams.
+Render Markdown and Mermaid diagrams in the terminal — no browser, no dependencies.
 
-## Idea
+## What it does
 
-Render `.md` files in the terminal with:
-- Formatted markdown (headings, lists, tables, code blocks)
-- Mermaid diagrams rendered as ASCII/Unicode art inline
-
-## Goals
-
-- Fast, keyboard-driven navigation
-- No browser needed
-- Works over SSH
+- Renders Mermaid diagrams (flowcharts, sequence diagrams) as high-resolution braille art
+- Displays Markdown inline in the terminal
+- Works over SSH, in tmux, anywhere with a Unicode terminal
 - Pipe-friendly: `cat README.md | mermaid-tui`
 
 ## Status
 
-Early idea phase. See `docs/design.md` for architecture thoughts.
+Early development. See [TODO.md](TODO.md) for what's planned.
+
+## Usage
+
+```bash
+make
+./mermaid-tui file.md
+cat diagram.mmd | ./mermaid-tui
+```
+
+Keyboard:
+- `q` — quit
+- `↑↓` — scroll
+- `+/-` — zoom
+
+## See also
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to build, test, and contribute
+- [docs/architecture.md](docs/architecture.md) — C4 design
+- [docs/renderer-decision.md](docs/renderer-decision.md) — why braille
