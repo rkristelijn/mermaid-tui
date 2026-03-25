@@ -1,5 +1,7 @@
 # mermaid-tui
 
+> **Status: early setup phase** — not usable yet. Architecture and tooling are being established.
+
 Render Markdown and Mermaid diagrams in the terminal — no browser, no dependencies.
 
 ## What it does
