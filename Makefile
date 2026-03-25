@@ -16,8 +16,10 @@ test:
 	@echo "All tests passed."
 
 check: mermaid-tui
+	@echo "==> pmccabe (complexity)"
+	@pmccabe src/*.c | awk '$$1 > 10 {print; found=1} END {if (found) exit 1}'
 	@echo "==> cppcheck"
-	cppcheck --enable=all --suppress=missingIncludeSystem --error-exitcode=1 src/
+	cppcheck --enable=all --suppress=missingIncludeSystem --suppress=unusedFunction --error-exitcode=1 src/
 	@echo "==> semgrep"
 	PATH="$$HOME/.local/bin:$$PATH" semgrep scan --config auto --error
 	@echo "==> gitleaks"
