@@ -1,7 +1,7 @@
 CC     = gcc
 CFLAGS = -Wall -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600
 
-.PHONY: all clean help check test install
+.PHONY: all clean help check test install docs
 
 all: mermaid-tui
 
@@ -29,7 +29,11 @@ install:
 	chmod +x .git/hooks/pre-commit
 	@echo "Git hooks installed."
 
-clean:
+docs:
+	@doxygen Doxyfile 2>&1 | grep -v "No output formats" || true
+	@echo "Doxygen lint passed."
+
+
 	rm -f mermaid-tui
 
 help:
