@@ -45,15 +45,23 @@ void canvas_clear(void) {
     memset(dots, 0, sizeof(dots));
 }
 
-/* Set a single dot at dot-space coordinates (dr, dc).
- * Silently ignored if out of bounds. */
+/**
+ * Set a single dot at dot-space coordinates (dr, dc).
+ * Silently ignored if out of bounds.
+ *
+ * @param dr  dot row
+ * @param dc  dot column
+ */
 void canvas_dot(int dr, int dc) {
-    if (dr >= 0 && dr < canvas_dh && dc >= 0 && dc < canvas_dw)
+    if (dr >= 0 && dr < canvas_dh && dc >= 0 && dc < canvas_dw) {
         dots[dr][dc] = 1;
+    }
 }
 
-/* Draw a line from (x0,y0) to (x1,y1) in dot space using linear interpolation.
- * Samples at 2x the Euclidean length to ensure no gaps in the line. */
+/**
+ * Draw a line from (x0,y0) to (x1,y1) in dot space using linear interpolation.
+ * Samples at 2x the Euclidean length to ensure no gaps in the line.
+ */
 void canvas_line(float x0, float y0, float x1, float y1) {
     float dx = x1 - x0, dy = y1 - y0;
     /* sample at 2x the Euclidean length to avoid gaps */
@@ -64,8 +72,10 @@ void canvas_line(float x0, float y0, float x1, float y1) {
     }
 }
 
-/* Draw an ellipse outline centered at (cx,cy) with radii rx, ry in dot space.
- * Samples at 2x the circumference to ensure no gaps. For a circle, rx == ry. */
+/**
+ * Draw an ellipse outline centered at (cx,cy) with radii rx, ry in dot space.
+ * Samples at 2x the circumference to ensure no gaps. For a circle, rx == ry.
+ */
 void canvas_ellipse(float cx, float cy, float rx, float ry) {
     /* sample at 2x the circumference to avoid gaps */
     int steps = (int)(2 * M_PI * fmaxf(rx, ry) * 2) + 1;
@@ -75,8 +85,10 @@ void canvas_ellipse(float cx, float cy, float rx, float ry) {
     }
 }
 
-/* Draw a rectangle outline with top-left (x,y), width w, height h in dot space.
- * Draws 4 lines: top, right, bottom, left. */
+/**
+ * Draw a rectangle outline with top-left (x,y), width w, height h in dot space.
+ * Draws 4 lines: top, right, bottom, left.
+ */
 void canvas_rect(float x, float y, float w, float h) {
     canvas_line(x,   y,   x+w, y);   /* top */
     canvas_line(x+w, y,   x+w, y+h); /* right */
@@ -84,35 +96,60 @@ void canvas_rect(float x, float y, float w, float h) {
     canvas_line(x,   y+h, x,   y);   /* left */
 }
 
-/* Render dot canvas to stdout as Unicode braille characters (U+2800–U+28FF).
- * Each terminal cell packs 8 dots into a 3-byte UTF-8 codepoint. */
+/**
+ * Pack a 2x4 dot block at terminal cell (r,c) into a braille bitmask.
+ * @return 8-bit bitmask for Unicode braille codepoint U+2800+bits
+ */
+static unsigned char cell_to_bits(int r, int c) {
+    unsigned char bits = 0;
+    for (int dr = 0; dr < 4; dr++) {
+        for (int dc = 0; dc < 2; dc++) {
+            if (dots[r*4+dr][c*2+dc]) {
+                bits |= (unsigned char)(1 << dot_bit[dr][dc]);
+            }
+        }
+    }
+    return bits;
+}
+
+/**
+ * Return 1 if any dot is set in the 2x4 block at terminal cell (r,c).
+ * Used by the ASCII renderer.
+ */
+static int cell_has_dot(int r, int c) {
+    for (int dr = 0; dr < 4; dr++) {
+        for (int dc = 0; dc < 2; dc++) {
+            if (dots[r*4+dr][c*2+dc]) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+/**
+ * Render dot canvas to stdout as Unicode braille (U+2800–U+28FF).
+ * Each terminal cell is encoded as a 3-byte UTF-8 codepoint.
+ */
 void canvas_print_braille(void) {
     for (int r = 0; r < term_rows; r++) {
         for (int c = 0; c < term_cols; c++) {
-            unsigned char bits = 0;
-            /* pack 2x4 dot block into braille bitmask */
-            for (int dr = 0; dr < 4; dr++)
-                for (int dc = 0; dc < 2; dc++)
-                    if (dots[r*4+dr][c*2+dc])
-                        bits |= (1 << dot_bit[dr][dc]);
-            /* encode U+2800+bits as 3-byte UTF-8 */
-            unsigned int cp = 0x2800 + bits;
+            unsigned int cp = 0x2800 + cell_to_bits(r, c);
+            /* encode as 3-byte UTF-8 */
             printf("%c%c%c", 0xE0|(cp>>12), 0x80|((cp>>6)&0x3F), 0x80|(cp&0x3F));
         }
         printf("\n");
     }
 }
 
-/* Render dot canvas as plain ASCII: '*' if any dot set, ' ' otherwise.
- * Fallback for terminals without Unicode/braille font support. */
+/**
+ * Render dot canvas as plain ASCII ('*' / ' ').
+ * Fallback for terminals without braille font support.
+ */
 void canvas_print_ascii(void) {
     for (int r = 0; r < term_rows; r++) {
         for (int c = 0; c < term_cols; c++) {
-            int any = 0;
-            for (int dr = 0; dr < 4 && !any; dr++)
-                for (int dc = 0; dc < 2 && !any; dc++)
-                    if (dots[r*4+dr][c*2+dc]) any = 1;
-            printf("%c", any ? '*' : ' ');
+            printf("%c", cell_has_dot(r, c) ? '*' : ' ');
         }
         printf("\n");
     }

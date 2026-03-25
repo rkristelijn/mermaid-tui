@@ -16,6 +16,8 @@ test:
 	@echo "All tests passed."
 
 check: mermaid-tui
+	@echo "==> clang-tidy"
+	clang-tidy src/*.c -- -std=c11 -D_XOPEN_SOURCE=600 2>&1 | grep "warning:" && exit 1 || true
 	@echo "==> pmccabe (complexity)"
 	@pmccabe src/*.c | awk '$$1 > 10 {print; found=1} END {if (found) exit 1}'
 	@echo "==> cppcheck"

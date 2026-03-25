@@ -1,0 +1,29 @@
+Checks: >
+  readability-braces-around-statements,
+  readability-function-size,
+  readability-function-cognitive-complexity,
+  readability-identifier-naming,
+  readability-duplicate-include,
+  bugprone-integer-division,
+  bugprone-misplaced-operator-in-strlen-in-alloc,
+  bugprone-sizeof-expression,
+  misc-unused-parameters,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling
+
+CheckOptions:
+  # Max function lines
+  - key: readability-function-size.LineThreshold
+    value: '40'
+  # Max parameters per function
+  - key: readability-function-size.ParameterThreshold
+    value: '5'
+  # Max cyclomatic complexity
+  - key: readability-function-cognitive-complexity.Threshold
+    value: '10'
+  # Naming conventions
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
