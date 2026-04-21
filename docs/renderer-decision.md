@@ -43,7 +43,7 @@ int rows = w.ws_row > 0 ? w.ws_row - 1 : 23;
 
 Each cell maps to Unicode codepoint `U+2800 + bitmask`:
 
-```
+```text
 col 0  col 1
 dot1   dot4   bit 0, 3   (row 0)
 dot2   dot5   bit 1, 4   (row 1)
@@ -57,7 +57,7 @@ UTF-8 encode: `U+2800`–`U+28FF` → 3-byte sequence `0xE2 0xA0 0x80`–`0xE2 0
 
 Drawing happens in dot space (2× cols, 4× rows), then projected to terminal cells:
 
-```
+```text
 virtual shape (float coords)
     ↓  scale to dot space
 dot canvas [rows*4][cols*2]  (1 byte per dot)
@@ -65,4 +65,4 @@ dot canvas [rows*4][cols*2]  (1 byte per dot)
 terminal output [rows][cols]  (3 bytes per cell, UTF-8)
 ```
 
-ASCII fallback: same dot canvas, map to `*` if any dot set, ` ` otherwise.
+ASCII fallback: same dot canvas, map to `*` if any dot set, `` otherwise.

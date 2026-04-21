@@ -24,6 +24,7 @@ cat diagram.mmd | ./mermaid-tui
 ```
 
 Keyboard:
+
 - `q` — quit
 - `↑↓` — scroll
 - `+/-` — zoom

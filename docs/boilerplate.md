@@ -4,7 +4,7 @@ Reference setup for C projects in this workspace. Based on the `tasks` repo.
 
 ## File structure
 
-```
+```text
 project/
 ├── src/
 │   └── main.c
@@ -72,7 +72,7 @@ help:
 
 ## .gitignore
 
-```
+```text
 <binary>
 *.o
 test/test_*
@@ -118,6 +118,7 @@ Five jobs, all run on push to `main` and on PRs:
 | `gitleaks` | gitleaks-action@v2 | Secret scanning (full history) |
 
 Key settings:
+
 - `fetch-depth: 0` on gitleaks — scans full git history, not just latest commit
 - `permissions: contents: read, pull-requests: read` — minimum needed for gitleaks-action
 - semgrep runs in official Docker image — no install step needed
@@ -155,7 +156,7 @@ int main(void) {
 
 Plain semver, one line:
 
-```
+```text
 0.1.0
 ```
 
@@ -165,7 +166,7 @@ Bump before every PR to main. CI enforces this via the `version-bump` job.
 
 ## Workflow
 
-```
+```text
 main (protected)
   └── feat/<name>     ← work here
         └── PR → CI → merge

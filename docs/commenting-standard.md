@@ -3,6 +3,7 @@
 ## Chosen standard: Doxygen
 
 [Doxygen](https://www.doxygen.nl/) is the de-facto standard for C/C++ inline documentation. It:
+
 - Parses specially formatted comments and generates HTML/PDF docs
 - Is supported by most editors (VSCode, CLion, vim plugins)
 - Is AI-friendly — structured tags make intent explicit

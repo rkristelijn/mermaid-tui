@@ -1,5 +1,5 @@
 /**
- * @file canvas.c
+ * @file canvas.cpp
  * @brief Braille dot canvas implementation.
  *
  * Drawing happens in dot space (canvas_dw x canvas_dh), where each terminal
@@ -9,10 +9,11 @@
  * @see ../docs/renderer-decision.md — why braille, encoding details, ASCII fallback
  * @see ../docs/architecture.md      — virtual canvas in the C4 component design
  */
+#include "canvas.h"
+
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
-#include "canvas.h"
 
 /* dot grid: 1 byte per dot, indexed [row][col] in dot space */
 static unsigned char dots[CANVAS_MAXROWS][CANVAS_MAXCOLS];
@@ -26,36 +27,27 @@ int canvas_dw, canvas_dh; /* dot dimensions = term_cols*2, term_rows*4 */
  *   dot3   dot6   bit 2, 5   (row 2)
  *   dot7   dot8   bit 6, 7   (row 3)
  */
-static const int dot_bit[4][2] = {
-    {0, 3}, {1, 4}, {2, 5}, {6, 7}
-};
+static const int DOT_BIT[4][2] = {{0, 3}, {1, 4}, {2, 5}, {6, 7}};
 
 /* Initialize canvas for given terminal dimensions.
  * Must be called before any drawing. */
 void canvas_init(int cols, int rows) {
-    term_cols = cols;
-    term_rows = rows;
-    canvas_dw  = cols * 2; /* 2 dots per terminal column */
-    canvas_dh  = rows * 4; /* 4 dots per terminal row */
-    canvas_clear();
+  term_cols = cols;
+  term_rows = rows;
+  canvas_dw = cols * 2; /* 2 dots per terminal column */
+  canvas_dh = rows * 4; /* 4 dots per terminal row */
+  canvas_clear();
 }
 
 /* Clear all dots. */
-void canvas_clear(void) {
-    memset(dots, 0, sizeof(dots));
-}
+void canvas_clear(void) { memset(dots, 0, sizeof(dots)); }
 
-/**
- * Set a single dot at dot-space coordinates (dr, dc).
- * Silently ignored if out of bounds.
- *
- * @param dr  dot row
- * @param dc  dot column
- */
+/* Set a single dot at dot-space coordinates (dr, dc).
+ * Silently ignored if out of bounds. */
 void canvas_dot(int dr, int dc) {
-    if (dr >= 0 && dr < canvas_dh && dc >= 0 && dc < canvas_dw) {
-        dots[dr][dc] = 1;
-    }
+  if (dr >= 0 && dr < canvas_dh && dc >= 0 && dc < canvas_dw) {
+    dots[dr][dc] = 1;
+  }
 }
 
 /**
@@ -63,13 +55,13 @@ void canvas_dot(int dr, int dc) {
  * Samples at 2x the Euclidean length to ensure no gaps in the line.
  */
 void canvas_line(float x0, float y0, float x1, float y1) {
-    float dx = x1 - x0, dy = y1 - y0;
-    /* sample at 2x the Euclidean length to avoid gaps */
-    int steps = (int)(sqrtf(dx*dx + dy*dy) * 2) + 1;
-    for (int i = 0; i <= steps; i++) {
-        float t = (float)i / steps;
-        canvas_dot((int)(y0 + dy*t), (int)(x0 + dx*t));
-    }
+  float dx = x1 - x0, dy = y1 - y0;
+  /* sample at 2x the Euclidean length to avoid gaps */
+  int steps = (int)(sqrtf(dx * dx + dy * dy) * 2) + 1;
+  for (int i = 0; i <= steps; i++) {
+    float t = (float)i / steps;
+    canvas_dot((int)(y0 + dy * t), (int)(x0 + dx * t));
+  }
 }
 
 /**
@@ -77,12 +69,12 @@ void canvas_line(float x0, float y0, float x1, float y1) {
  * Samples at 2x the circumference to ensure no gaps. For a circle, rx == ry.
  */
 void canvas_ellipse(float cx, float cy, float rx, float ry) {
-    /* sample at 2x the circumference to avoid gaps */
-    int steps = (int)(2 * M_PI * fmaxf(rx, ry) * 2) + 1;
-    for (int i = 0; i < steps; i++) {
-        float a = 2 * M_PI * i / steps;
-        canvas_dot((int)(cy + sinf(a) * ry), (int)(cx + cosf(a) * rx));
-    }
+  /* sample at 2x the circumference to avoid gaps */
+  int steps = (int)(2 * M_PI * fmaxf(rx, ry) * 2) + 1;
+  for (int i = 0; i < steps; i++) {
+    float a = 2 * M_PI * i / steps;
+    canvas_dot((int)(cy + sinf(a) * ry), (int)(cx + cosf(a) * rx));
+  }
 }
 
 /**
@@ -90,10 +82,10 @@ void canvas_ellipse(float cx, float cy, float rx, float ry) {
  * Draws 4 lines: top, right, bottom, left.
  */
 void canvas_rect(float x, float y, float w, float h) {
-    canvas_line(x,   y,   x+w, y);   /* top */
-    canvas_line(x+w, y,   x+w, y+h); /* right */
-    canvas_line(x+w, y+h, x,   y+h); /* bottom */
-    canvas_line(x,   y+h, x,   y);   /* left */
+  canvas_line(x, y, x + w, y);         /* top */
+  canvas_line(x + w, y, x + w, y + h); /* right */
+  canvas_line(x + w, y + h, x, y + h); /* bottom */
+  canvas_line(x, y + h, x, y);         /* left */
 }
 
 /**
@@ -101,15 +93,15 @@ void canvas_rect(float x, float y, float w, float h) {
  * @return 8-bit bitmask for Unicode braille codepoint U+2800+bits
  */
 static unsigned char cell_to_bits(int r, int c) {
-    unsigned char bits = 0;
-    for (int dr = 0; dr < 4; dr++) {
-        for (int dc = 0; dc < 2; dc++) {
-            if (dots[r*4+dr][c*2+dc]) {
-                bits |= (unsigned char)(1 << dot_bit[dr][dc]);
-            }
-        }
+  unsigned char bits = 0;
+  for (int dr = 0; dr < 4; dr++) {
+    for (int dc = 0; dc < 2; dc++) {
+      if (dots[r * 4 + dr][c * 2 + dc]) {
+        bits |= (unsigned char)(1 << DOT_BIT[dr][dc]);
+      }
     }
-    return bits;
+  }
+  return bits;
 }
 
 /**
@@ -117,14 +109,14 @@ static unsigned char cell_to_bits(int r, int c) {
  * Used by the ASCII renderer.
  */
 static int cell_has_dot(int r, int c) {
-    for (int dr = 0; dr < 4; dr++) {
-        for (int dc = 0; dc < 2; dc++) {
-            if (dots[r*4+dr][c*2+dc]) {
-                return 1;
-            }
-        }
+  for (int dr = 0; dr < 4; dr++) {
+    for (int dc = 0; dc < 2; dc++) {
+      if (dots[r * 4 + dr][c * 2 + dc]) {
+        return 1;
+      }
     }
-    return 0;
+  }
+  return 0;
 }
 
 /**
@@ -132,14 +124,14 @@ static int cell_has_dot(int r, int c) {
  * Each terminal cell is encoded as a 3-byte UTF-8 codepoint.
  */
 void canvas_print_braille(void) {
-    for (int r = 0; r < term_rows; r++) {
-        for (int c = 0; c < term_cols; c++) {
-            unsigned int cp = 0x2800 + cell_to_bits(r, c);
-            /* encode as 3-byte UTF-8 */
-            printf("%c%c%c", 0xE0|(cp>>12), 0x80|((cp>>6)&0x3F), 0x80|(cp&0x3F));
-        }
-        printf("\n");
+  for (int r = 0; r < term_rows; r++) {
+    for (int c = 0; c < term_cols; c++) {
+      unsigned int cp = 0x2800 + cell_to_bits(r, c);
+      /* encode as 3-byte UTF-8 */
+      printf("%c%c%c", 0xE0 | (cp >> 12), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F));
     }
+    printf("\n");
+  }
 }
 
 /**
@@ -147,10 +139,10 @@ void canvas_print_braille(void) {
  * Fallback for terminals without braille font support.
  */
 void canvas_print_ascii(void) {
-    for (int r = 0; r < term_rows; r++) {
-        for (int c = 0; c < term_cols; c++) {
-            printf("%c", cell_has_dot(r, c) ? '*' : ' ');
-        }
-        printf("\n");
+  for (int r = 0; r < term_rows; r++) {
+    for (int c = 0; c < term_cols; c++) {
+      printf("%c", cell_has_dot(r, c) ? '*' : ' ');
     }
+    printf("\n");
+  }
 }

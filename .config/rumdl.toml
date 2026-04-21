@@ -1,0 +1,12 @@
+# rumdl configuration — Rust markdown linter
+# @see https://rumdl.dev/global-settings
+
+[global]
+exclude = ["node_modules"]
+respect-gitignore = true
+# MD013: line length — too many existing violations in docs
+# MD033: inline HTML — used in some docs
+# MD036: emphasis as heading
+# MD041: first line heading — some docs have frontmatter
+# MD046: code block style
+disable = ["MD013", "MD033", "MD036", "MD041", "MD046"]
