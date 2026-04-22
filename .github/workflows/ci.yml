@@ -40,10 +40,13 @@ jobs:
         run: git fetch origin main
       - name: Check VERSION was bumped
         run: |
-          if ! git diff origin/main -- VERSION | grep -q '^+[^+]'; then
-            echo "FAIL: VERSION file was not changed."
+          MAIN_VER=$(git show origin/main:VERSION)
+          PR_VER=$(cat VERSION)
+          if [ "$MAIN_VER" = "$PR_VER" ]; then
+            echo "FAIL: VERSION $PR_VER (PR) is the same as $MAIN_VER (main). Bump the version before merging."
             exit 1
           fi
+          echo "OK: VERSION $MAIN_VER (main) → $PR_VER (PR)"
 
   # --- Lint (no build, fast) ---
 
