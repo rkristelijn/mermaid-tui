@@ -11,7 +11,7 @@ BUILD_DIR="${1:-build-cov}"
 main() {
   echo "==> make coverage (building with --coverage...)"
   mkdir -p "${BUILD_DIR}"
-  g++ -std=c++17 --coverage -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600 \
+  g++ -std=c++20 --coverage -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600 \
     -o "${BUILD_DIR}/mermaid-tui" src/main.cpp src/canvas.cpp -lm
 
   echo "==> make coverage (running tests...)"

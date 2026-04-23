@@ -14,7 +14,7 @@ main() {
   if [[ "${FULL}" == true ]]; then
     echo "==> make tidy (full mode)"
     find src -name '*.cpp' -print0 \
-      | xargs -0 "${CLANG_TIDY}" --config-file=.config/.clang-tidy -- -std=c++17 -I src/ 2>&1 \
+      | xargs -0 "${CLANG_TIDY}" --config-file=.config/.clang-tidy -- -std=c++20 -I src/ 2>&1 \
       | grep "warning:" && exit 1 || true
   else
     echo "==> make tidy (smart incremental mode)"
@@ -39,7 +39,7 @@ main() {
     else
       echo "  [checking] $(echo "${files}" | wc -w | tr -d ' ') files"
       # shellcheck disable=SC2086
-      ${CLANG_TIDY} --config-file=.config/.clang-tidy ${files} -- -std=c++17 -I src/ 2>&1 \
+      ${CLANG_TIDY} --config-file=.config/.clang-tidy ${files} -- -std=c++20 -I src/ 2>&1 \
         | grep "warning:" && exit 1 || true
     fi
   fi

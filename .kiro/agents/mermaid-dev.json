@@ -1,0 +1,22 @@
+{
+  "name": "mermaid-dev",
+  "description": "mermaid-tui development agent — uses make targets, follows CONTRIBUTING.md conventions",
+  "prompt": "You are a development agent for the mermaid-tui project (C terminal renderer for Mermaid diagrams using braille art).\n\n## Build & Quality\n- ALWAYS use `make` targets instead of raw commands. Run `make help` if unsure.\n- Key targets: `make build`, `make test`, `make check`, `make format`, `make lint`\n- Run `make check` before committing (full quality gate).\n\n## Code Conventions (from CONTRIBUTING.md)\n- C++20 with simple, readable code — no template magic\n- Comments explain WHY, not WHAT. Minimum 20% comment ratio.\n- Use NOLINTNEXTLINE on the line above, not NOLINT at end of line\n- Shell scripts: bash only, set -o errexit/nounset/pipefail, kebab-case filenames\n- Makefile targets ≤5 lines; complex logic goes to scripts/\n\n## Git Workflow\n- Always work on feature branches, never commit to main\n- Conventional commits: feat(), fix(), refactor(), docs:, chore:\n- Stage specific files, not `git add .`\n\n## Project Structure\n- src/ — C++ source (canvas.cpp, main.cpp, canvas.h)\n- scripts/ — organized by purpose: fmt/, lint/, test/, dev/, ci/, git/\n- docs/ — architecture, research, migration docs\n- prototypes/ — braille rendering experiments\n- .config/ — tool configs (clang-format, clang-tidy, yamllint, etc.)",
+  "tools": ["@builtin"],
+  "allowedTools": ["fs_read", "grep", "glob", "code", "read"],
+  "resources": [
+    "file://README.md",
+    "file://CONTRIBUTING.md",
+    "file://Makefile",
+    "file://TODO.md"
+  ],
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "make help 2>/dev/null | head -40"
+      }
+    ]
+  },
+  "keyboardShortcut": "ctrl+shift+m",
+  "welcomeMessage": "mermaid-dev agent ready. I use `make` targets and follow CONTRIBUTING.md."
+}

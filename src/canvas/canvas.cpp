@@ -9,7 +9,7 @@
  * @see ../docs/renderer-decision.md — why braille, encoding details, ASCII fallback
  * @see ../docs/architecture.md      — virtual canvas in the C4 component design
  */
-#include "canvas.h"
+#include "canvas/canvas.h"
 
 #include <math.h>
 #include <stdio.h>

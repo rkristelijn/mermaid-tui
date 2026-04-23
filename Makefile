@@ -1,7 +1,7 @@
 CXX      = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600
+CXXFLAGS = -Wall -Wextra -std=c++20 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=600 -I src/
 BINARY   = mermaid-tui
-SRCS     = src/main.cpp src/canvas.cpp
+SRCS     = src/main.cpp src/canvas/canvas.cpp src/parser/parser.cpp src/layout/layout.cpp src/render/render.cpp
 
 # FULL=1 disables smart mode for exhaustive checks (e.g. clang-tidy)
 FULL ?= 0
@@ -106,6 +106,7 @@ docs: ## Check doxygen warnings
 ##@ Testing
 
 test-unit: all ## Run unit tests
+	@CXX="$(CXX)" CXXFLAGS="$(CXXFLAGS)" SRCS="$(SRCS)" bash scripts/test/build-tests.sh
 	@bash scripts/test/run-unit.sh
 
 coverage: ## Build with coverage and run tests
