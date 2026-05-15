@@ -10,8 +10,9 @@ STEP=0
 TOTAL=5
 
 run_step() {
-  local name="$1"; shift
-  (( STEP++ )) || true
+  local name="$1"
+  shift
+  ((STEP++)) || true
   printf "  [%d/%d] %s... " "${STEP}" "${TOTAL}" "${name}"
   if output=$("$@" 2>&1); then
     printf "✓\n"

@@ -45,20 +45,20 @@ declare -A HINTS=(
 
 run_step() {
   local phase="$1" name="$2" cmd="$3"
-  (( STEP++ )) || true
+  ((STEP++)) || true
   local output start elapsed
   printf "  [%d/%d] %s... " "${STEP}" "${TOTAL}" "${name}"
   start="$(date +%s)"
   if output="$(eval "${cmd}" 2>&1)"; then
-    elapsed="$(( $(date +%s) - start ))"
+    elapsed="$(($(date +%s) - start))"
     printf "✓ (%ds)\n" "${elapsed}"
-    (( PASSED++ )) || true
+    ((PASSED++)) || true
   else
-    elapsed="$(( $(date +%s) - start ))"
+    elapsed="$(($(date +%s) - start))"
     printf "✗ (%ds)\n" "${elapsed}"
     echo "${output}" | sed 's/^/    /'
     FAILED_NAMES+=("${name}")
-    (( FAILED++ )) || true
+    ((FAILED++)) || true
   fi
 }
 
@@ -80,7 +80,7 @@ main() {
   done
 
   echo ""
-  if (( FAILED > 0 )); then
+  if ((FAILED > 0)); then
     echo "Failed:"
     for name in "${FAILED_NAMES[@]}"; do
       local hint="${HINTS[${name}]:-run: make ${name}}"

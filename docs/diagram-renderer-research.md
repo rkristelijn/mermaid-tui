@@ -98,7 +98,7 @@ pure terminal solution and uses box-drawing, not braille.
 
 ## Recommended approach
 
-```
+```text
 input text ──► parser ──► graph {nodes, edges} ──► layout ──► canvas ──► braille
                 │                                    │
           (adapter per       (topological sort +     │

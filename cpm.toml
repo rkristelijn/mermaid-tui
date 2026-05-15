@@ -5,8 +5,8 @@ lang = "cpp"
 build = "make"
 
 [tools]
-llvm = "19"
-gcc = "14"
+g++ = "14"
+clang-format = "19"
 cppcheck = "2.13"
 pmccabe = "2.8"
 cloc = "2.02"

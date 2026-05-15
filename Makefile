@@ -14,8 +14,23 @@ FULL ?= 0
 	tidy complexity comment-ratio docs \
 	test test-unit coverage coverage-report \
 	sast sast-security sast-secret \
-	check full-check bump precommit prepush help \
+	check quick-check full-check bump precommit prepush workflow help \
 	major minor patch
+
+##@ Workflow (daily flow)
+
+workflow: ## Show the recommended workflow steps
+	@echo ""
+	@echo "  Daily workflow:"
+	@echo "  ─────────────────────────────────────────────"
+	@echo "  1. make build          Build the project"
+	@echo "  2. make quick-check    Quick checks (<5s)"
+	@echo "  3. make full-check     Full checks before push"
+	@echo "  4. make test           Run tests"
+	@echo ""
+
+quick-check: format ## Quick quality check (<5s)
+full-check: check ## Full quality check before push
 
 ##@ Getting Started
 
@@ -47,22 +62,19 @@ test: test-unit ## Run all tests
 
 check: lint test sast ## Full quality gate (CI/pre-push)
 
-full-check: ## Run exhaustive quality checks (FULL=1)
-	@$(MAKE) FULL=1 check
-
 ##@ Formatting
 
 format-code: ## Format C++ code (clang-format)
-	@bash scripts/fmt/format-code.sh
+	@bash lib/cpm/shell/run.sh format-code bash lib/cpm/checks/cpp/format-code.sh
 
 format-md: ## Format Markdown files (rumdl)
-	@bash scripts/fmt/format-md.sh
+	@bash lib/cpm/shell/run.sh format-md bash lib/cpm/checks/universal/format-md.sh
 
 format-yaml: ## Format YAML files (trailing whitespace)
-	@bash scripts/fmt/format-yaml.sh
+	@bash lib/cpm/shell/run.sh format-yaml bash lib/cpm/checks/universal/format-yaml.sh
 
 format-scripts: ## Format shell scripts (shfmt)
-	@bash scripts/fmt/format-scripts.sh
+	@bash lib/cpm/shell/run.sh format-scripts bash lib/cpm/checks/universal/format-scripts.sh
 
 ##@ Linting
 
@@ -74,28 +86,28 @@ lint-format-code: ## Check C++ formatting (no changes)
 	@echo "  [done] lint-format-code"
 
 lint-cppcheck: ## Run cppcheck static analysis
-	@bash scripts/lint/lint-code.sh
+	@bash lib/cpm/shell/run.sh lint-code bash lib/cpm/checks/cpp/lint-code.sh
 
 lint-md: ## Lint Markdown files (rumdl)
-	@bash scripts/lint/lint-md.sh
+	@bash lib/cpm/shell/run.sh lint-md bash lib/cpm/checks/universal/lint-md.sh
 
 lint-yaml: ## Lint YAML files (yamllint)
-	@bash scripts/lint/lint-yaml.sh
+	@bash lib/cpm/shell/run.sh lint-yaml bash lib/cpm/checks/universal/lint-yaml.sh
 
 lint-makefile: ## Check Makefile conventions
-	@bash scripts/lint/check-makefile.sh
+	@bash lib/cpm/shell/run.sh check-makefile bash lib/cpm/checks/universal/check-makefile.sh
 
 lint-scripts: ## Check shell script conventions (shellcheck)
-	@bash scripts/lint/check-scripts.sh
+	@bash lib/cpm/shell/run.sh check-scripts bash lib/cpm/checks/universal/check-scripts.sh
 
 tidy: all ## Run clang-tidy (smart: changed files only)
-	@bash scripts/lint/run-tidy.sh $(if $(filter 1,$(FULL)),--full)
+	@bash lib/cpm/shell/run.sh run-tidy bash lib/cpm/checks/cpp/run-tidy.sh $(if $(filter 1,$(FULL)),--full)
 
 complexity: all ## Check cyclomatic complexity (pmccabe)
-	@bash scripts/lint/check-complexity.sh
+	@bash lib/cpm/shell/run.sh check-complexity bash lib/cpm/checks/cpp/check-complexity.sh
 
 comment-ratio: ## Show comment ratio per file
-	@bash scripts/lint/check-comment-ratio.sh
+	@bash lib/cpm/shell/run.sh check-comment-ratio bash lib/cpm/checks/universal/check-comment-ratio.sh
 
 docs: ## Check doxygen warnings
 	@echo "==> checking doxygen..."
@@ -127,11 +139,7 @@ sast-security: ## Run semgrep security scan
 	@echo "  [done] sast-security"
 
 sast-secret: ## Run gitleaks secret scan
-	@echo "==> running sast-secret (gitleaks)..."
-	@if command -v gitleaks >/dev/null; then \
-		gitleaks detect --source . --log-level error --no-banner; \
-	else echo "  [skip] gitleaks not installed"; fi
-	@echo "  [done] sast-secret"
+	@bash lib/cpm/shell/run.sh sast-secret bash lib/cpm/checks/universal/sast-secret.sh
 
 ##@ Development
 
@@ -159,10 +167,10 @@ all: check-deps-quiet
 	@$(CXX) $(CXXFLAGS) -o $(BINARY) $(SRCS) -lm
 
 check-deps-quiet:
-	@bash scripts/lint/check-deps.sh
+	@bash lib/cpm/checks/cpp/check-deps.sh
 
 check-deps:
-	@bash scripts/lint/check-deps.sh --verbose
+	@bash lib/cpm/checks/cpp/check-deps.sh --verbose
 
 check-versions:
 	@bash scripts/lint/check-versions.sh

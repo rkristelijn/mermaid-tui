@@ -15,9 +15,9 @@ main() {
     [ -x "$t" ] || continue
     echo "  [running] $(basename "$t")"
     "$t"
-    (( found++ )) || true
+    ((found++)) || true
   done
-  if (( found == 0 )); then
+  if ((found == 0)); then
     echo "  [skip] no test binaries found in ${BUILD_DIR}/"
   fi
   echo "  [done] test-unit"

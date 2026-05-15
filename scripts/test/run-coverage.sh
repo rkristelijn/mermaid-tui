@@ -19,9 +19,9 @@ main() {
   for t in "${BUILD_DIR}"/test_*; do
     [ -x "$t" ] || continue
     "$t"
-    (( found++ )) || true
+    ((found++)) || true
   done
-  if (( found == 0 )); then
+  if ((found == 0)); then
     echo "  [skip] no test binaries found in ${BUILD_DIR}/"
   fi
   echo "  [done] coverage"

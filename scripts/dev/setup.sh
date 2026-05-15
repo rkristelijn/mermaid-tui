@@ -61,17 +61,17 @@ install_llvm_tools() {
     has "clang-tidy-${ver}" || need_install=true
     if [[ "${need_install}" == true ]]; then
       echo "  Installing LLVM ${ver} tools from apt.llvm.org..."
-      wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key \
-        | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc > /dev/null
+      wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key |
+        sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc >/dev/null
       # shellcheck source=/dev/null
       source /etc/os-release
       local codename="${UBUNTU_CODENAME:-${VERSION_CODENAME}}"
-      echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename} main" \
-        | sudo tee /etc/apt/sources.list.d/llvm.list > /dev/null
+      echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename} main" |
+        sudo tee /etc/apt/sources.list.d/llvm.list >/dev/null
       sudo apt-get update -qq
       sudo apt-get install -y "clang-format-${ver}" "clang-tidy-${ver}"
       has clang-format || sudo ln -sf "/usr/bin/clang-format-${ver}" /usr/bin/clang-format
-      has clang-tidy   || sudo ln -sf "/usr/bin/clang-tidy-${ver}" /usr/bin/clang-tidy
+      has clang-tidy || sudo ln -sf "/usr/bin/clang-tidy-${ver}" /usr/bin/clang-tidy
     fi
   fi
 }
@@ -131,17 +131,17 @@ main() {
   detect_platform
   echo "==> Checking tools..."
 
-  has g++    || install_pkg "g++"    "gcc"    "g++"
-  has jq     || install_pkg "jq"     "jq"     "jq"
+  has g++ || install_pkg "g++" "gcc" "g++"
+  has jq || install_pkg "jq" "jq" "jq"
 
   install_llvm_tools
 
-  has cppcheck   || install_pkg "cppcheck"   "cppcheck"   "cppcheck"
-  has pmccabe    || install_pkg "pmccabe"     "pmccabe"    "pmccabe"
-  has cloc       || install_pkg "cloc"        "cloc"       "cloc"
-  has shellcheck || install_pkg "shellcheck"  "shellcheck" "shellcheck"
-  has gitleaks   || install_pkg "gitleaks"    "gitleaks"   "gitleaks"
-  has yamllint   || install_pkg "yamllint"    "yamllint"   "yamllint"
+  has cppcheck || install_pkg "cppcheck" "cppcheck" "cppcheck"
+  has pmccabe || install_pkg "pmccabe" "pmccabe" "pmccabe"
+  has cloc || install_pkg "cloc" "cloc" "cloc"
+  has shellcheck || install_pkg "shellcheck" "shellcheck" "shellcheck"
+  has gitleaks || install_pkg "gitleaks" "gitleaks" "gitleaks"
+  has yamllint || install_pkg "yamllint" "yamllint" "yamllint"
 
   install_doxygen
   install_semgrep
@@ -149,26 +149,26 @@ main() {
 
   if [[ "${IS_LINUX}" == true ]]; then
     has lcov || install_pkg "lcov" "lcov" "lcov"
-    has bc   || install_pkg "bc"   "bc"   "bc"
+    has bc || install_pkg "bc" "bc" "bc"
   fi
 
   echo ""
   echo "==> All tools:"
-  printf "  %-20s %s\n" "g++"          "$(g++ --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo 'missing')"
+  printf "  %-20s %s\n" "g++" "$(g++ --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || echo 'missing')"
   printf "  %-20s %s\n" "clang-format" "$(clang-format --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo 'missing')"
-  printf "  %-20s %s\n" "cppcheck"     "$(cppcheck --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' || echo 'missing')"
-  printf "  %-20s %s\n" "doxygen"      "$(doxygen --version 2>/dev/null || echo 'missing')"
-  printf "  %-20s %s\n" "cloc"         "$(cloc --version 2>/dev/null || echo 'missing')"
-  printf "  %-20s %s\n" "shellcheck"   "$(shellcheck --version 2>/dev/null | grep '^version:' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo 'missing')"
-  printf "  %-20s %s\n" "yamllint"     "$(yamllint --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo 'missing')"
-  printf "  %-20s %s\n" "rumdl"        "$(rumdl version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo 'missing')"
-  printf "  %-20s %s\n" "semgrep"      "$(semgrep --version 2>/dev/null || echo 'missing')"
-  printf "  %-20s %s\n" "gitleaks"     "$(has gitleaks && echo 'installed' || echo 'missing')"
+  printf "  %-20s %s\n" "cppcheck" "$(cppcheck --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+' || echo 'missing')"
+  printf "  %-20s %s\n" "doxygen" "$(doxygen --version 2>/dev/null || echo 'missing')"
+  printf "  %-20s %s\n" "cloc" "$(cloc --version 2>/dev/null || echo 'missing')"
+  printf "  %-20s %s\n" "shellcheck" "$(shellcheck --version 2>/dev/null | grep '^version:' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo 'missing')"
+  printf "  %-20s %s\n" "yamllint" "$(yamllint --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo 'missing')"
+  printf "  %-20s %s\n" "rumdl" "$(rumdl version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo 'missing')"
+  printf "  %-20s %s\n" "semgrep" "$(semgrep --version 2>/dev/null || echo 'missing')"
+  printf "  %-20s %s\n" "gitleaks" "$(has gitleaks && echo 'installed' || echo 'missing')"
 
   if [[ -d .git ]] && [[ -d scripts/git ]]; then
     echo "==> Installing git hooks..."
     [[ -f scripts/git/pre-commit.sh ]] && cp scripts/git/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
-    [[ -f scripts/git/pre-push.sh ]]   && cp scripts/git/pre-push.sh .git/hooks/pre-push     && chmod +x .git/hooks/pre-push
+    [[ -f scripts/git/pre-push.sh ]] && cp scripts/git/pre-push.sh .git/hooks/pre-push && chmod +x .git/hooks/pre-push
   fi
 
   echo "==> Setup complete. Run 'make check' to verify."
