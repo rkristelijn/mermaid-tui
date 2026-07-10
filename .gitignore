@@ -1,3 +1,22 @@
 mermaid-tui
 *.o
 test/test_*
+
+# Build
+build/
+build-cov/
+
+# Cache
+.cache/
+.rumdl_cache/
+
+# Coverage
+*.gcda
+*.gcno
+coverage.info
+
+# Logs
+*.log
+
+# Environment
+.env

@@ -1,0 +1,45 @@
+[project]
+name = "mermaid-tui"
+version = "0.2.0"
+lang = "cpp"
+build = "make"
+
+[tools]
+g++ = "14"
+clang-format = "19"
+cppcheck = "2.13"
+pmccabe = "2.8"
+cloc = "2.02"
+shellcheck = "0.10.0"
+shfmt = "3.7.0"
+yamllint = "1.33.0"
+rumdl = "0.1.73"
+doxygen = "1.16.1"
+semgrep = "1.56.0"
+gitleaks = "8.18.2"
+
+[checks]
+format-code = true
+format-yaml = true
+format-md = true
+format-scripts = true
+lint-code = true
+lint-tidy = true
+lint-scripts = true
+lint-makefile = true
+complexity = true
+comment-ratio = true
+docs = true
+sast-security = true
+sast-secret = true
+
+[checks.complexity]
+threshold = 10
+
+[checks.comment-ratio]
+threshold = 20
+
+[hooks]
+pre-commit = true
+pre-push = true
+commit-msg = false

@@ -38,6 +38,7 @@ make ci     # build + test + check (full pipeline, same as GitHub Actions)
 ```
 
 Checks in order:
+
 1. **clang-tidy** — braces, naming, cognitive complexity, bugprone patterns
 2. **pmccabe** — cyclomatic complexity ≤ 10 per function
 3. **cppcheck** — static analysis
@@ -47,7 +48,7 @@ Checks in order:
 
 ## Workflow
 
-```
+```text
 main (protected — no direct commits)
   └── feat/<name>
         └── PR → CI → merge
@@ -62,6 +63,7 @@ main (protected — no direct commits)
 ## Why so many checks?
 
 This project is built with AI assistance. AI generates plausible-looking code that can be:
+
 - Subtly wrong (logic errors that pass tests)
 - Unnecessarily complex (accidental complexity)
 - Poorly documented (hard to maintain)
